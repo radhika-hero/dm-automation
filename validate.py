@@ -106,26 +106,34 @@ def main() -> int:
                 first = config["keywords"][seen[key]]
                 unscoped = [
                     e for e in (first, entry)
-                    if e.get("enabled", True) and not (e.get("media_ids") or [])
+                    if e.get("enabled", True)
+                    and not (e.get("media_ids") or e.get("facebook_post_ids") or [])
                 ]
                 if unscoped:
                     errors.append(
                         f"{where}: trigger '{trigger}' is also used by keywords[{seen[key]}]. "
-                        "A shared trigger needs 'media_ids' on every enabled entry that uses "
-                        "it, or only the first one would ever fire.")
+                        "A shared trigger needs pins on every enabled entry that uses it, or "
+                        "only the first one would ever fire.")
                 # Pinned is not enough: the pins must not OVERLAP. Two entries sharing a trigger
                 # AND a post is the same bug wearing a disguise — match_comment returns the first
                 # entry in file order, so the second silently never fires. Found 2026-08-31, when
                 # both LABEL entries pinned to the same three posts because both reels say the
                 # word out loud and the caption cannot tell them apart.
                 elif all(e.get("enabled", True) for e in (first, entry)):
-                    shared = set(first.get("media_ids") or []) & set(entry.get("media_ids") or [])
-                    if shared:
-                        errors.append(
-                            f"{where}: trigger '{trigger}' is shared with keywords[{seen[key]}] "
-                            f"and BOTH are pinned to the same post(s): {sorted(shared)}. "
-                            "Only the first would ever fire. Split the media_ids so each entry "
-                            "owns its own posts.")
+                    # Checked on EACH platform separately. Two entries may legitimately be
+                    # pinned to the same post when they answer DIFFERENT words (COOKIE and
+                    # CHEMICAL both live on the shooting videos, with different guides) — the
+                    # bug is only ever "same trigger AND same post", because then the first
+                    # entry in file order silently swallows the second's leads.
+                    for field, label in (("media_ids", "Instagram"),
+                                         ("facebook_post_ids", "Facebook")):
+                        shared = set(first.get(field) or []) & set(entry.get(field) or [])
+                        if shared:
+                            errors.append(
+                                f"{where}: trigger '{trigger}' is shared with "
+                                f"keywords[{seen[key]}] and BOTH are pinned to the same "
+                                f"{label} post(s): {sorted(shared)}. Only the first would ever "
+                                f"fire. Split the {field} so each entry owns its own posts.")
             seen[key] = index
 
         if entry.get("match", "word") not in ("word", "contains"):

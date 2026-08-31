@@ -33,20 +33,40 @@ def matches(text: str, keyword: str, mode: str = "word") -> bool:
     return re.search(rf"(?<!\w){re.escape(needle)}(?!\w)", haystack) is not None
 
 
+#: which config field scopes an entry, per platform. Instagram media ids and Facebook post ids
+#: are different namespaces — the same number means nothing across them — so they cannot share
+#: one list, and a comment is only ever checked against the list for the platform it arrived on.
+SCOPE_FIELD = {"instagram": "media_ids", "facebook": "facebook_post_ids"}
+
+
+def scope_for(entry: dict, platform: str) -> list[str]:
+    return entry.get(SCOPE_FIELD.get(platform, "media_ids")) or []
+
+
 def match_comment(comment_text: str, keywords: list[dict],
-                  media_id: str | None = None) -> dict | None:
+                  media_id: str | None = None,
+                  platform: str = "instagram") -> dict | None:
     """First keyword (config order) whose trigger appears in the comment. None = no match.
 
-    An entry may carry its own `media_ids` — then it only answers comments on THOSE posts.
-    That is how one spoken keyword can serve two different reels: LABEL is the CTA in both
-    SCR-04 and SCR-07 (audio wins, Pritam 2026-08-08) but each reel has its own blog page and
-    its own PDF, so each gets an entry scoped to its own media ids.
+    An entry may carry its own pins — then it only answers comments on THOSE posts. That is how
+    one spoken keyword can serve two different reels: LABEL is the CTA in both SCR-04 and SCR-07
+    (audio wins, Pritam 2026-08-08) but each reel has its own blog page and its own PDF, so each
+    gets an entry scoped to its own posts. COOKIE works the same way across SCR-03 and the
+    shooting videos.
+
+    `platform` selects which pin list is consulted, so an entry can answer on Instagram, on
+    Facebook, or on both, without the two ever being confused for each other.
     """
     for entry in keywords:
         if not entry.get("enabled", True):
             continue
-        scope = entry.get("media_ids") or []
+        scope = scope_for(entry, platform)
         if scope and (media_id is None or media_id not in scope):
+            continue
+        if not scope and platform != "instagram":
+            # An unpinned entry answers on ANY post, which was a real live bug on Instagram
+            # ("so sweet" returning the sweetener card). Never let a NEW platform inherit that:
+            # on Facebook an entry must be explicitly pinned to answer at all.
             continue
         for trigger in [entry["keyword"], *entry.get("aliases", [])]:
             if matches(comment_text, trigger, entry.get("match", "word")):

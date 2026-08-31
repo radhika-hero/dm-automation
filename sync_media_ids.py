@@ -111,14 +111,14 @@ def _plain(prop: dict | None) -> str:
     return "".join(part.get("plain_text", "") for part in prop.get("rich_text", []))
 
 
-def fetch_notion_posts(token: str) -> list[dict]:
-    """Every posted Instagram row that has a Media ID, with its provenance."""
+def fetch_notion_posts(token: str, platform: str = "Instagram") -> list[dict]:
+    """Every posted row for one platform that has a Media ID, with its provenance."""
     headers = {"Authorization": f"Bearer {token}", "Notion-Version": NOTION_VERSION,
                "Content-Type": "application/json"}
     rows, cursor = [], None
     while True:
         payload = {"filter": {"and": [
-            {"property": "Platform", "select": {"equals": "Instagram"}},
+            {"property": "Platform", "select": {"equals": platform}},
             {"property": "Status", "select": {"equals": "Posted"}},
         ]}, "page_size": 100}
         if cursor:
@@ -224,13 +224,17 @@ def main() -> int:
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     keywords = config.get("keywords", [])
 
-    posts = fetch_notion_posts(notion_token)
+    posts = fetch_notion_posts(notion_token, "Instagram")
+    fb_posts = fetch_notion_posts(notion_token, "Facebook")
     captions = fetch_captions(meta_token, args.limit)
-    print(f"Notion: {len(posts)} posted Instagram row(s) with a Media ID")
+    print(f"Notion: {len(posts)} Instagram + {len(fb_posts)} Facebook row(s) with a Media ID")
     print(f"Instagram: {len(captions)} caption(s) read for cross-check\n")
 
-    # piece code -> the media ids of every post made from it
+    # piece code -> the post ids made from it, kept PER PLATFORM. Instagram media ids and
+    # Facebook post ids are different namespaces; merging them into one list would scope an
+    # entry against ids that can never match, which fails silently rather than loudly.
     by_piece: dict[str, list[str]] = {}
+    fb_by_piece: dict[str, list[str]] = {}
     unknown: list[dict] = []
     for post in posts:
         piece = piece_of(post["source_file"])
@@ -238,6 +242,10 @@ def main() -> int:
             by_piece.setdefault(piece, []).append(post["media_id"])
         else:
             unknown.append(post)
+    for post in fb_posts:
+        piece = piece_of(post["source_file"])
+        if piece:
+            fb_by_piece.setdefault(piece, []).append(post["media_id"])
 
     # ⚠️ NOTION IS AUTHORITATIVE ONLY OVER POSTS IT KNOWS ABOUT. It holds rows for what the
     # SCHEDULER published — 32 Instagram rows — while the account itself carries 323 media. The
@@ -248,6 +256,7 @@ def main() -> int:
     # So a pin is removed ONLY when Notion KNOWS that post and places it elsewhere. A pin Notion
     # has never seen is left alone for a human to judge.
     notion_known = {post["media_id"] for post in posts}
+    fb_notion_known = {post["media_id"] for post in fb_posts}
 
     changes, enabled_now, still_off, auto_off = [], [], [], []
     for entry in keywords:
@@ -269,6 +278,20 @@ def main() -> int:
             changes.append((entry["id"], added, removed, kept_unknown))
         entry["media_ids"] = merged
 
+        # Facebook, by exactly the same provenance rule.
+        fb_wanted = [pid for piece in pieces for pid in fb_by_piece.get(piece, [])]
+        fb_extra = [p for p in (entry.get("facebook_extra_post_ids") or [])
+                    if p not in fb_wanted]
+        fb_existing = entry.get("facebook_post_ids") or []
+        fb_kept = [p for p in fb_existing
+                   if p not in fb_notion_known and p not in fb_wanted and p not in fb_extra]
+        fb_added = [p for p in fb_wanted if p not in fb_existing]
+        fb_removed = [p for p in fb_existing
+                      if p in fb_notion_known and p not in fb_wanted and p not in fb_extra]
+        if fb_added or fb_removed:
+            changes.append((entry["id"] + " (fb)", fb_added, fb_removed, fb_kept))
+        entry["facebook_post_ids"] = fb_wanted + fb_extra + fb_kept
+
     print("pins (Notion provenance is authoritative for posts Notion knows):")
     for eid, added, removed, kept in changes:
         for m in added:
@@ -285,7 +308,8 @@ def main() -> int:
         # An ENABLED entry with NO media_ids is unscoped, and unscoped means it answers its word
         # on ANY post carrying any CTA. Verified live 2026-08-31: with SWEET enabled and unpinned,
         # a comment of "so sweet" on a label-reading reel returned the SWEET card.
-        if not args.no_enable and entry.get("enabled") and not entry.get("media_ids"):
+        has_pins = bool(entry.get("media_ids") or entry.get("facebook_post_ids"))
+        if not args.no_enable and entry.get("enabled") and not has_pins:
             entry["enabled"] = False
             auto_off.append(f"{entry['id']} ({entry.get('title','')})")
             continue
@@ -293,7 +317,7 @@ def main() -> int:
             continue
         if not entry.get("url"):
             still_off.append(f"{entry['id']}: no url yet")
-        elif not entry.get("media_ids"):
+        elif not has_pins:
             still_off.append(f"{entry['id']}: no post from {entry.get('pieces') or 'its piece'} yet")
         elif entry.get("blocked_reason"):
             still_off.append(f"{entry['id']}: {entry['blocked_reason']}")

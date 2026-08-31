@@ -17,6 +17,13 @@
     "  blocked_reason  WHY it is off, in one line, or null. A UI shows this instead of parsing notes.",
     "  media_ids       pins the entry to specific posts. An ENABLED entry with an EMPTY list is",
     "                  unscoped and answers its word on ANY post carrying any CTA - never do that.",
+    "  facebook_post_ids        the SAME idea for Facebook. Facebook post ids are a different",
+    "                  namespace from Instagram media ids, so they cannot share one list: a comment",
+    "                  is scoped against the list for the platform it arrived on.",
+    "                  ⚠️ Ids must be QUALIFIED, <page_id>_<post_id>. A bare id is rejected with",
+    "                  '(#12) singular statuses API is deprecated', which reads like a deprecation",
+    "                  notice and actually means 'unqualified id'. Reels return theirs bare.",
+    "  facebook_extra_post_ids  hand-pinned Facebook posts; the sync never touches these.",
     "  extra_media_ids HAND-PINNED posts this entry also answers, which sync_media_ids.py NEVER adds",
     "                  to or removes. Use it when a post is genuinely served by an entry that did not",
     "                  produce it - e.g. an Evergreen carousel whose CTA is LABEL, where the guide is",
@@ -56,7 +63,8 @@
   "media_ids": [],
   "public_reply": {
     "enabled": true,
-    "text": "Just sent it to your DMs 💛 If you don't follow us yet, check your message Requests folder."
+    "text": "Just sent it to your DMs 💛 If you don't follow us yet, check your message Requests folder.",
+    "facebook_text": "Just sent it to your inbox 💛 Check your message requests if you don't see it."
   },
   "keywords": [
     {
@@ -70,6 +78,8 @@
         "18110707355515889"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [],
       "source_piece": "Product page",
       "url": "https://www.dietswad.in/power-bites.html?utm_source=instagram&utm_medium=dm&utm_campaign=bites-product",
@@ -92,6 +102,10 @@
         "17939685183317576"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122147526405111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-01"
       ],
@@ -116,6 +130,10 @@
         "18092494127107007"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122148414195111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-02"
       ],
@@ -140,6 +158,10 @@
         "18094901510428823"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122150028273111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-03"
       ],
@@ -164,6 +186,10 @@
         "18619934509050883"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122148592701111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "VID-01",
         "VID-02",
@@ -195,6 +221,8 @@
         "18134432698530767",
         "17940147138292058"
       ],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-04"
       ],
@@ -219,6 +247,10 @@
         "18105537383164537"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122148224301111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-07"
       ],
@@ -241,6 +273,8 @@
       "blocked_reason": null,
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-05"
       ],
@@ -265,6 +299,10 @@
         "17983504614259324"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122147708475111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-06"
       ],
@@ -290,6 +328,11 @@
         "18058644125784317"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122148893253111771",
+        "915233554997476_122149299621111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-08",
         "SCR-09"
@@ -313,6 +356,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-10"
       ],
@@ -335,6 +380,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-11"
       ],
@@ -357,6 +404,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-12"
       ],
@@ -383,6 +432,10 @@
         "17910543894448931"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122147957319111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-13"
       ],
@@ -407,6 +460,10 @@
         "18131154973647715"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122149215171111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-14"
       ],
@@ -429,6 +486,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-15"
       ],
@@ -451,6 +510,8 @@
       "blocked_reason": "NEVER enable unpinned: 'diet' sits inside 'Diet Swad', which nearly every caption contains. Reel not published yet.",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-16"
       ],
@@ -473,6 +534,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-17"
       ],
@@ -495,6 +558,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-18"
       ],
@@ -517,6 +582,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-19"
       ],
@@ -539,6 +606,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-20"
       ],
@@ -561,6 +630,8 @@
       "blocked_reason": "reel not published yet",
       "media_ids": [],
       "extra_media_ids": [],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-21"
       ],
@@ -595,6 +666,10 @@
         "17885702040463907"
       ],
       "extra_media_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122148592701111771"
+      ],
+      "facebook_extra_post_ids": [],
       "pieces": [
         "VID-01",
         "VID-02",

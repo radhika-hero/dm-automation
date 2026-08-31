@@ -108,6 +108,52 @@ class MetaClient:
                          fields="id,text,username,timestamp", limit=limit)
         return body.get("data", [])
 
+    # ---------- Facebook reads ----------
+    #
+    # Facebook needs the PAGE token for reads too, not the system-user token: /<page>/posts and
+    # a post's comments are Page-owned edges. Shapes differ from Instagram in two ways that
+    # matter, so they are normalised here rather than in the caller:
+    #   * a comment's author is `from.name`, not `username`
+    #   * `created_time` is the timestamp field, not `timestamp`
+    # Both are renamed to the Instagram spelling so run.py stays one code path.
+
+    def recent_facebook_posts(self, limit: int = 25) -> list[dict]:
+        body = self._get(f"{self.page_id}/posts", token=self.page_token(),
+                         fields="id,message,created_time,comments.summary(true)", limit=limit)
+        out = []
+        for post in body.get("data", []):
+            out.append({
+                "id": post["id"],          # already qualified <page>_<post> on this edge
+                "caption": post.get("message") or "",
+                "timestamp": post.get("created_time"),
+                "comments_count": (post.get("comments", {})
+                                   .get("summary", {}).get("total_count", 0)),
+            })
+        return out
+
+    def facebook_comments(self, post_id: str, limit: int = 50) -> list[dict]:
+        body = self._get(f"{post_id}/comments", token=self.page_token(),
+                         fields="id,message,from,created_time", limit=limit)
+        out = []
+        for comment in body.get("data", []):
+            author = comment.get("from") or {}
+            out.append({
+                "id": comment["id"],
+                "text": comment.get("message") or "",
+                "username": author.get("name", ""),
+                # Our OWN comments must never be treated as leads. On Instagram that is a
+                # username match; on Facebook the Page comments as itself, so compare ids —
+                # the display name can be changed in Page settings at any time and a rename
+                # would silently turn the runner's own hashtag comments into "leads".
+                "from_id": author.get("id", ""),
+                "timestamp": comment.get("created_time"),
+            })
+        return out
+
+    def reply_to_facebook_comment(self, comment_id: str, text: str) -> dict:
+        """The visible reply. On Facebook a reply is a comment ON the comment."""
+        return self._post(f"{comment_id}/comments", token=self.page_token(), message=text)
+
     # ---------- writes ----------
 
     def send_private_reply(self, comment_id: str, message: dict) -> dict:

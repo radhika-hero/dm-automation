@@ -156,3 +156,46 @@ def test_validator_rejects_a_shared_trigger_with_no_media_scope(tmp_path, monkey
     path.write_text(json.dumps(bad), encoding="utf-8")
     monkeypatch.setattr(validate, "CONFIG_PATH", path)
     assert validate.main() == 1
+
+
+# --- Facebook (added 2026-09-01, once the token carried pages_messaging) --------------------
+
+TWO_PLATFORM = [
+    {"keyword": "COOKIE", "url": "https://x/biscuit", "title": "T", "button_title": "B",
+     "media_ids": ["ig1"], "facebook_post_ids": ["page_1"]},
+    {"keyword": "CHEMICAL", "url": "https://x/snacks", "title": "T", "button_title": "B",
+     "media_ids": ["ig1"], "facebook_post_ids": ["page_1"]},
+]
+
+
+def test_facebook_and_instagram_pins_are_separate_namespaces():
+    """An Instagram media id must never satisfy a Facebook scope, or vice versa."""
+    assert match_comment("COOKIE", TWO_PLATFORM, media_id="ig1",
+                         platform="instagram")["url"] == "https://x/biscuit"
+    assert match_comment("COOKIE", TWO_PLATFORM, media_id="page_1",
+                         platform="facebook")["url"] == "https://x/biscuit"
+    # The right id on the WRONG platform must not match.
+    assert match_comment("COOKIE", TWO_PLATFORM, media_id="ig1", platform="facebook") is None
+    assert match_comment("COOKIE", TWO_PLATFORM, media_id="page_1", platform="instagram") is None
+
+
+def test_one_post_can_answer_two_different_words():
+    """COOKIE and CHEMICAL both live on the shooting videos, with different guides."""
+    for platform, pid in (("instagram", "ig1"), ("facebook", "page_1")):
+        assert match_comment("COOKIE", TWO_PLATFORM, media_id=pid,
+                             platform=platform)["url"] == "https://x/biscuit"
+        assert match_comment("CHEMICAL", TWO_PLATFORM, media_id=pid,
+                             platform=platform)["url"] == "https://x/snacks"
+
+
+def test_unpinned_entry_never_answers_on_facebook():
+    """On Instagram an unpinned entry answers anywhere (legacy). Facebook must NOT inherit that.
+
+    The live bug on 2026-08-31: SWEET was enabled and unpinned, so "so sweet" on a
+    label-reading reel returned the sweetener card. A new platform starts strict.
+    """
+    unpinned = [{"keyword": "SWEET", "url": "https://x/s", "title": "T", "button_title": "B"}]
+    assert match_comment("so sweet", unpinned, media_id="anything",
+                         platform="instagram") is not None
+    assert match_comment("so sweet", unpinned, media_id="anything",
+                         platform="facebook") is None
