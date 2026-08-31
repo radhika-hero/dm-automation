@@ -1,0 +1,10 @@
+__pycache__/
+.venv/
+*.pyc
+
+# NEVER commit a token. It is an Actions secret and nothing else.
+*token*.txt
+.env
+
+# local migration backup, not part of the repo
+*.v1.bak

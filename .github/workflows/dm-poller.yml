@@ -1,0 +1,95 @@
+# Comment -> DM poller. Every ~10 minutes (DM_AUTOMATION_PLAN.md §5).
+#
+# Why 10 minutes and not hourly like the scheduler: the 7-day private-reply window means a
+# late reply still WORKS, but a lead magnet landing 2 hours after someone comments is a cold
+# lead. This is the reason the repo is PUBLIC — unlimited free Actions minutes. The private
+# scheduler repo already spends ~41% of its 2,000 min/mo and could not absorb this.
+#
+# ⚠️ PUBLIC REPO. META_SYSTEM_USER_TOKEN is an Actions secret and NOTHING else. Never a file,
+# never a default, never echoed. It is the same never-expiring token that posts to IG/FB/YouTube.
+name: dm-poller
+
+on:
+  # 🔴 THE SCHEDULE IS DELIBERATELY OFF FOR THE FIRST DEPLOY (2026-09-01).
+  #
+  # A private reply is ONE-SHOT AND IRREVERSIBLE — one per comment, permanently, no retry and
+  # no undo (subcode 2534023). Turning the cron on at the same moment the code first lands means
+  # the very first DMs this project ever sends go out unsupervised, to real people, from a
+  # config that has never been exercised against the live API. If anything is wrong with a card,
+  # those leads are spent and cannot be recovered.
+  #
+  # So: run it BY HAND first, from the Actions tab —
+  #   1. dry_run: true, limit: 0   -> read + match only, sends nothing. Check the pairings.
+  #   2. dry_run: false, limit: 1  -> exactly ONE real DM. Confirm the card renders in the app.
+  # Then uncomment the two lines below and commit, and the 10-minute poller takes over.
+  #
+  # (Secrets must be set before either run, or run.py exits 1 and every tick goes red.)
+  #
+  # schedule:
+  #   - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Read and match only — send nothing"
+        type: boolean
+        default: false
+      limit:
+        description: "Stop after N sends (0 = no limit)"
+        default: "0"
+
+permissions:
+  contents: write          # the ledger is committed back
+
+# Two runs must never overlap: both would read the same un-replied comment and both would try
+# to send. The second gets subcode 2534023 rather than a double-DM, but it also races the
+# ledger commit. Serialise instead.
+concurrency:
+  group: dm-poller
+  cancel-in-progress: false
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      # Fail-closed gate: an enabled keyword with a broken url would DM a dead card, and
+      # there is no second attempt to fix it with.
+      - name: Validate keywords.json
+        run: python -X utf8 validate.py
+
+      - name: Poll comments and send
+        env:
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ -n "${{ inputs.limit }}" ]; then ARGS="$ARGS --limit ${{ inputs.limit }}"; fi
+          python -X utf8 run.py $ARGS
+
+      # `if: always()` is LOAD-BEARING — a bare `if:` implies success(), which would skip the
+      # write-back whenever run.py exits non-zero. The ledger would then forget the DMs that
+      # DID send before the failure, and the next run would try them again. The scheduler hit
+      # exactly this shape of bug; see its scheduler.yml "Commit status back" step.
+      - name: Commit the ledger
+        if: always()
+        run: |
+          git config user.name "ds-dm-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet ledger.json; then
+            echo "ledger unchanged"
+          else
+            git add ledger.json
+            git commit -m "dm: record replies [skip ci]"
+            git pull --rebase && git push
+          fi

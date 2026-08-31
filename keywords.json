@@ -1,0 +1,588 @@
+{
+  "_readme": [
+    "Keyword -> DM card config. Data-driven and separate from code: the cron is dumb, the data varies.",
+    "",
+    "SCHEMA v2 (2026-08-31). Restructured so a small UI tool can create and edit entries later",
+    "WITHOUT a human or Claude reading prose to work out an entry's real state. Every fact the",
+    "system acts on is now its own field; `notes` is commentary ONLY and nothing reads it.",
+    "",
+    "  id              STABLE UNIQUE identity. Never reuse, never rename - it is the utm_campaign,",
+    "                  and renaming it orphans every click already recorded in GA4 under the old one.",
+    "  keyword         the SPOKEN word, i.e. what the reel's audio tells viewers to comment. NOT an",
+    "                  identity: two entries may legitimately share one (LABEL), which is exactly why",
+    "                  `id` exists as a separate field.",
+    "  aliases         extra words that also trigger this entry.",
+    "  match           'word' (default, word-boundary) or 'contains'.",
+    "  enabled         whether this entry can fire.",
+    "  blocked_reason  WHY it is off, in one line, or null. A UI shows this instead of parsing notes.",
+    "  media_ids       pins the entry to specific posts. An ENABLED entry with an EMPTY list is",
+    "                  unscoped and answers its word on ANY post carrying any CTA - never do that.",
+    "  extra_media_ids HAND-PINNED posts this entry also answers, which sync_media_ids.py NEVER adds",
+    "                  to or removes. Use it when a post is genuinely served by an entry that did not",
+    "                  produce it - e.g. an Evergreen carousel whose CTA is LABEL, where the guide is",
+    "                  the right answer even though the post is not that reel. Deliberate, and",
+    "                  survives every re-sync; `media_ids` is derived and does not.",
+    "  pieces          MACHINE-READABLE list of the content pieces this entry serves, e.g.",
+    "                  ['SCR-08','SCR-09']. This is what pins media_ids: sync_media_ids.py maps each",
+    "                  posted Instagram post to a piece via Notion's `Source File` path, then to the",
+    "                  entry that claims that piece. Empty list = pin by hand (e.g. the product page).",
+    "  source_piece    the same thing in human form, for reading. NOTHING acts on it.",
+    "  url             the blog article, WITH its three UTMs.",
+    "  title/subtitle/button_title/image_url   the DM card itself.",
+    "  pdf             the guide the blog page serves.",
+    "  blog_attribute  the page's data-guide-download value, where it has one (may differ from id).",
+    "  notes           free prose. Commentary only - NOTHING in the code reads this.",
+    "",
+    "utm_campaign == id. Format: <keyword-slug>-<piece-code>, so anyone reading a GA4 report can see",
+    "both the offer and which content piece it came from: label-scr04 vs label-scr07, bingo-rtl07,",
+    "myth-sst12. The three UTMs are source/medium/campaign ONLY - the site is configured for three,",
+    "so the content identifier goes INSIDE the campaign (Pritam, 2026-08-31).",
+    "",
+    "AUTHORITY (fixed 2026-08-31): the keyword is whatever the REEL'S RECORDED AUDIO says.",
+    "The caption files (...\\SCRIPT N Captions\\SCRNN_CAPTIONS.md) hold those decisions and win over",
+    "lead_magnets\\INDEX.md, which is older and still lists three superseded words.",
+    "  SCR-08 + SCR-09 -> 'OLD IS GOLD' (not DADA / DADI)   - Pritam 2026-08-04",
+    "  SCR-13          -> 'KIDS'        (not BACHCHA)       - Pritam 2026-08-04",
+    "  SCR-07          -> 'LABEL'       (SACH is retired)   - Pritam 2026-08-08",
+    "",
+    "LANDING PAGES (2026-08-31): ManyChat is NOT used at all. The DM button sends people to a",
+    "dietswad.in BLOG PAGE, and the blog page carries the PDF download button. So `url` is always",
+    "a blog article, never a Drive link and never a raw PDF. Blog status lives in",
+    "..\\..\\Development studio\\website-revamp\\BLOG_PROGRESS.md."
+  ],
+  "schema_version": 2,
+  "own_username": "dietswad",
+  "scan_media_limit": 25,
+  "media_ids": [],
+  "public_reply": {
+    "enabled": true,
+    "text": "Just sent it to your DMs 💛 If you don't follow us yet, check your message Requests folder."
+  },
+  "keywords": [
+    {
+      "id": "bites-product",
+      "keyword": "BITES",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18110707355515889"
+      ],
+      "extra_media_ids": [],
+      "pieces": [],
+      "source_piece": "Product page",
+      "url": "https://www.dietswad.in/power-bites.html?utm_source=instagram&utm_medium=dm&utm_campaign=bites-product",
+      "title": "Diet Swad Power Bites",
+      "subtitle": "Date-based, no refined sugar. Made for the 4 PM slump.",
+      "button_title": "See Power Bites",
+      "image_url": null,
+      "pdf": null,
+      "blog_attribute": null,
+      "notes": "Product page, not a lead magnet — the example from the plan."
+    },
+    {
+      "id": "sapna-scr01",
+      "keyword": "SAPNA",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "17939685183317576"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-01"
+      ],
+      "source_piece": "SCR-01",
+      "url": "https://www.dietswad.in/blog/how-diet-swad-started.html?utm_source=instagram&utm_medium=dm&utm_campaign=sapna-scr01",
+      "title": "Ghar Se Brand Tak",
+      "subtitle": "7 honest lessons from building Diet Swad.",
+      "button_title": "Read the story",
+      "image_url": null,
+      "pdf": "guides/ghar-se-brand-tak-7-honest-lessons.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-01 · guides/ghar-se-brand-tak-7-honest-lessons.pdf"
+    },
+    {
+      "id": "nataraj-scr02",
+      "keyword": "NATARAJ",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18092494127107007"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-02"
+      ],
+      "source_piece": "SCR-02",
+      "url": "https://www.dietswad.in/blog/dadi-nani-ka-khana-food-wisdom.html?utm_source=instagram&utm_medium=dm&utm_campaign=nataraj-scr02",
+      "title": "Dadi-Nani Ka Khana",
+      "subtitle": "5 timeless food lessons, backed by modern nutrition.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/dadi-nani-ka-khana-5-timeless-lessons.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-02 · guides/dadi-nani-ka-khana-5-timeless-lessons.pdf"
+    },
+    {
+      "id": "cookie-scr03",
+      "keyword": "COOKIE",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18094901510428823"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-03"
+      ],
+      "source_piece": "SCR-03",
+      "url": "https://www.dietswad.in/blog/are-millet-cookies-healthy.html?utm_source=instagram&utm_medium=dm&utm_campaign=cookie-scr03",
+      "title": "Healthy Cookie Ka Sach",
+      "subtitle": "7 good ingredients, 5 red flags, one 30-second test.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/healthy-cookie-ka-sach-dietitian-guide.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-03 · guides/healthy-cookie-ka-sach-dietitian-guide.pdf"
+    },
+    {
+      "id": "label-scr04",
+      "keyword": "LABEL",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18134432698530767",
+        "17940147138292058"
+      ],
+      "extra_media_ids": [
+        "18134432698530767",
+        "17940147138292058"
+      ],
+      "pieces": [
+        "SCR-04"
+      ],
+      "source_piece": "SCR-04",
+      "url": "https://www.dietswad.in/blog/how-to-read-a-food-label-in-60-seconds.html?utm_source=instagram&utm_medium=dm&utm_campaign=label-scr04",
+      "title": "Label 60 Seconds Mein",
+      "subtitle": "Sugar's 11 disguises and a pocket cheat sheet.",
+      "button_title": "Get the cheat sheet",
+      "image_url": null,
+      "pdf": "guides/label-60-seconds-mein-cheat-sheet.pdf",
+      "blog_attribute": "LABEL-04",
+      "notes": "SCR-04 - guides/label-60-seconds-mein-cheat-sheet.pdf. LABEL entry 1 of 2, blog page how-to-read-a-food-label-in-60-seconds.html, data-guide-download=\"LABEL-04\". SCR-04's own reel has NEVER been published, so `pieces` yields nothing and media_ids comes entirely from extra_media_ids: the Aug 26 Evergreen label-breakdown carousel and the Aug 02 RTL-06 five-year-old-test reel. Both ask for LABEL in their captions and are label-reading-METHOD content, which is this guide's subject - so they serve it even though neither is the reel that produced it. Pritam's call 2026-09-01. Hand-pins live in extra_media_ids precisely so a re-sync cannot undo them."
+    },
+    {
+      "id": "label-scr07",
+      "keyword": "LABEL",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18105537383164537"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-07"
+      ],
+      "source_piece": "SCR-07",
+      "url": "https://www.dietswad.in/blog/10-everyday-indian-foods-label-check.html?utm_source=instagram&utm_medium=dm&utm_campaign=label-scr07",
+      "title": "Kitchen Ki 10 Cheezein",
+      "subtitle": "10 everyday items, what the label really says.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/kitchen-ki-10-cheezein-honest-breakdown.pdf",
+      "blog_attribute": "LABEL-07",
+      "notes": "SCR-07 - guides/kitchen-ki-10-cheezein-honest-breakdown.pdf (the MASTER filename keeps its old SACH prefix on purpose - trigger word != filename). LABEL entry 2 of 2, own blog page (10-everyday-indian-foods-label-check.html), a genuinely different subject from label-scr04: ten named kitchen items, not the reading method. data-guide-download=\"LABEL-07\" - TRACKING only; the spoken trigger stays plain LABEL, never put the suffix in a caption. UNBLOCKED 2026-09-01: the pins were split from Notion provenance, which showed SCR-07's reel HAD been posted all along (ig-2026-08-11-scr07-then-vs-now, media 18105537383164537). The earlier note claiming it was unposted was wrong - it came from reading captions, which cannot tell SCR-04's LABEL reel from SCR-07's."
+    },
+    {
+      "id": "dates-scr05",
+      "keyword": "DATES",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": null,
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-05"
+      ],
+      "source_piece": "SCR-05",
+      "url": "https://www.dietswad.in/blog/arabian-dates-vs-local-dates.html?utm_source=instagram&utm_medium=dm&utm_campaign=dates-scr05",
+      "title": "Arabian vs Local Dates",
+      "subtitle": "Why coating exists, what's really inside, 4 buying checks.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/arabian-dates-vs-local-dates.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-05 · guides/arabian-dates-vs-local-dates.pdf"
+    },
+    {
+      "id": "swap-scr06",
+      "keyword": "SWAP",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "17983504614259324"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-06"
+      ],
+      "source_piece": "SCR-06",
+      "url": "https://www.dietswad.in/blog/7-day-snack-swap-challenge.html?utm_source=instagram&utm_medium=dm&utm_campaign=swap-scr06",
+      "title": "7-Day Snack Swap Challenge",
+      "subtitle": "One swap a day. What changes by day 7.",
+      "button_title": "Start the challenge",
+      "image_url": null,
+      "pdf": "guides/7-day-snack-swap-challenge.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-06 · guides/7-day-snack-swap-challenge.pdf"
+    },
+    {
+      "id": "old-is-gold-scr08-09",
+      "keyword": "OLD IS GOLD",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18098697812576617",
+        "18058644125784317"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-08",
+        "SCR-09"
+      ],
+      "source_piece": "SCR-08 + SCR-09",
+      "url": "https://www.dietswad.in/blog/bringing-back-old-food-habits.html?utm_source=instagram&utm_medium=dm&utm_campaign=old-is-gold-scr08-09",
+      "title": "Purani Peedhi Ka Raaz",
+      "subtitle": "5 eating habits from before packaged food.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/old-is-gold-purani-peedhi-ka-raaz.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-08 + SCR-09 — ONE trigger for both reels, on purpose (Pritam 2026-08-04). Both confirmed to say OLD IS GOLD in SCR08/SCR09_CAPTIONS.md, 2026-08-31 Blog page DONE 2026-08-31: bringing-back-old-food-habits.html, its own page per Pritam. It deliberately does NOT repeat the five habits (dadi-nani-ka-khana-food-wisdom.html already covers those and the DADA/DADI guides duplicate it exactly); it covers how to actually reinstate them in a modern week. The merged PDF was BUILT 2026-08-31: authored as a new dict in lead_magnets/content_habits.py (keyword OLD IS GOLD) and rendered via render_pdfs.py, so its cover reads 'commenting OLD IS GOLD' rather than DADA or DADI. Shipped to guides/old-is-gold-purani-peedhi-ka-raaz.pdf and the blog page now carries the .post-magnet. The old DADA and DADI PDFs are superseded and must NOT be re-shipped to the site. DADA and DADI are still two separate PDFs. Pritam is making one guide to serve both. The blog page dadi-nani-ka-khana-food-wisdom.html already covers this ground (story + science) but currently serves the NATARAJ PDF. TODO 2026-08-31: build the merged PDF, decide whether it gets its own page or shares the NATARAJ one, then fill url + enable."
+    },
+    {
+      "id": "fresh-scr10",
+      "keyword": "FRESH",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-10"
+      ],
+      "source_piece": "SCR-10",
+      "url": "https://www.dietswad.in/blog/preservatives-in-indian-food-explained.html?utm_source=instagram&utm_medium=dm&utm_campaign=fresh-scr10",
+      "title": "Preservative Decoder",
+      "subtitle": "10 common preservatives, decoded. Print and keep.",
+      "button_title": "Get the decoder",
+      "image_url": null,
+      "pdf": "guides/preservative-decoder-kitchen-cheat-sheet.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-10 · guides/preservative-decoder-kitchen-cheat-sheet.pdf"
+    },
+    {
+      "id": "truth-scr11",
+      "keyword": "TRUTH",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-11"
+      ],
+      "source_piece": "SCR-11",
+      "url": "https://www.dietswad.in/blog/india-vs-europe-food-standards.html?utm_source=instagram&utm_medium=dm&utm_campaign=truth-scr11",
+      "title": "India vs Europe",
+      "subtitle": "Why the same brand runs a different formula here.",
+      "button_title": "Read the guide",
+      "image_url": null,
+      "pdf": "guides/india-vs-europe-parents-survival-guide.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-11 · guides/india-vs-europe-parents-survival-guide.pdf"
+    },
+    {
+      "id": "easy-scr12",
+      "keyword": "EASY",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-12"
+      ],
+      "source_piece": "SCR-12",
+      "url": "https://www.dietswad.in/blog/why-healthy-eating-is-hard-in-india.html?utm_source=instagram&utm_medium=dm&utm_campaign=easy-scr12",
+      "title": "Healthy Eating In India",
+      "subtitle": "5 small swaps that survive real Indian life.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/healthy-eating-in-india-5-small-swaps.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-12 · guides/healthy-eating-in-india-5-small-swaps.pdf (PDF uploaded, no blog page) DONE 2026-08-31. Angle chosen to avoid cannibalising SWAP: this page is WHY it is hard in India (availability, social pressure, information); the 7-day challenge keeps the one-swap-a-day framing. Trigger EASY confirmed against SCR-12 captions."
+    },
+    {
+      "id": "kids-scr13",
+      "keyword": "KIDS",
+      "aliases": [
+        "BACHCHA"
+      ],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "17910543894448931"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-13"
+      ],
+      "source_piece": "SCR-13",
+      "url": "https://www.dietswad.in/blog/healthy-snacks-for-kids-tiffin.html?utm_source=instagram&utm_medium=dm&utm_campaign=kids-scr13",
+      "title": "Bacche Ka Clean Tiffin",
+      "subtitle": "A 5-day tiffin plan and the no-tantrum transition.",
+      "button_title": "Get the plan",
+      "image_url": null,
+      "pdf": "guides/bacche-ka-clean-tiffin-5-day-guide.pdf",
+      "blog_attribute": "KIDS",
+      "notes": "SCR-13 - blog page live, serving guides/bacche-ka-clean-tiffin-5-day-guide.pdf. Trigger is KIDS (the audio says KIDS - Pritam 2026-08-04); BACHCHA is kept as an ALIAS because the live Aug 8 caption still asks for BACHCHA and an Instagram caption cannot be edited through the Graph API. There is only ONE guide, not two - the file just keeps its old BACHCHA- prefix. ENABLED 2026-09-01: with both words answered, the one pinned post is now coherent end to end - its caption says BACHCHA and the PDF cover says BACHCHA. STILL OUTSTANDING (Pritam): the replacement PDF whose cover reads KIDS. Until it lands, anyone who types KIDS gets a cover saying BACHCHA - cosmetic, and no live caption asks for KIDS yet. Drop the new master in lead_magnets/pdfs and copy it to guides/ under the SAME slug so the blog href needs no edit. The page already carries data-guide-download=\"KIDS\"."
+    },
+    {
+      "id": "fuel-scr14",
+      "keyword": "FUEL",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18131154973647715"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-14"
+      ],
+      "source_piece": "SCR-14",
+      "url": "https://www.dietswad.in/blog/natural-pre-workout-food-india.html?utm_source=instagram&utm_medium=dm&utm_campaign=fuel-scr14",
+      "title": "Natural Pre-Workout Fuel",
+      "subtitle": "What to eat 3 hours, 1 hour and 15 minutes before.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/natural-pre-workout-fuel-guide.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-14 · guides/natural-pre-workout-fuel-guide.pdf"
+    },
+    {
+      "id": "sweet-scr15",
+      "keyword": "SWEET",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-15"
+      ],
+      "source_piece": "SCR-15",
+      "url": "https://www.dietswad.in/blog/date-sweets-vs-sugar-mithai.html?utm_source=instagram&utm_medium=dm&utm_campaign=sweet-scr15",
+      "title": "Meetha Bhi, Healthy Bhi",
+      "subtitle": "Dates vs jaggery vs khand vs honey vs sugar.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/meetha-bhi-khao-healthy-bhi-raho.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-15 · guides/meetha-bhi-khao-healthy-bhi-raho.pdf (PDF uploaded, no blog page) DONE 2026-08-31. Pritam chose the angle: date bites vs syrup-based mithai (satiety and portion), matching SCR-15's actual subject. The jaggery article keeps the cane-to-gur-to-khand processing comparison, so the two do not compete. Trigger SWEET confirmed against SCR-15 captions."
+    },
+    {
+      "id": "diet-scr16",
+      "keyword": "DIET",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "NEVER enable unpinned: 'diet' sits inside 'Diet Swad', which nearly every caption contains. Reel not published yet.",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-16"
+      ],
+      "source_piece": "SCR-16",
+      "url": "https://www.dietswad.in/blog/healthy-snack-schedule-india.html?utm_source=instagram&utm_medium=dm&utm_campaign=diet-scr16",
+      "title": "7-Day Clean Snack Schedule",
+      "subtitle": "Three snack windows, seven days, no calorie counting.",
+      "button_title": "Get the schedule",
+      "image_url": null,
+      "pdf": "guides/7-day-clean-snack-schedule.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-16 · guides/7-day-clean-snack-schedule.pdf (PDF uploaded, no blog page) Blog page DONE 2026-08-31 (healthy-snack-schedule-india.html): the three snack windows plus portion anchors, no 7-day table, so it does not repeat the swap challenge. Trigger DIET confirmed against SCR-16 captions. 🔴 DELIBERATELY LEFT DISABLED, and this one must be pinned before it is ever switched on: the word \"diet\" appears in \"Diet Swad\", which almost every caption contains. caption_has_cta() matches captions with \"contains\", so enabling this pulls essentially every post into scope; match_comment() then word-matches \"diet\", so an ordinary comment like \"love diet swad\" would fire a DM. Fill media_ids with SCR-16's post ids FIRST (run list_media.py), then enable."
+    },
+    {
+      "id": "midnight-scr17",
+      "keyword": "MIDNIGHT",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-17"
+      ],
+      "source_piece": "SCR-17",
+      "url": "https://www.dietswad.in/blog/late-night-snacking-what-to-eat.html?utm_source=instagram&utm_medium=dm&utm_campaign=midnight-scr17",
+      "title": "Smart Late-Night Snacking",
+      "subtitle": "Why the craving happens and what to reach for.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/smart-late-night-snacking-guide.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-17 · guides/smart-late-night-snacking-guide.pdf"
+    },
+    {
+      "id": "ghee-scr18",
+      "keyword": "GHEE",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-18"
+      ],
+      "source_piece": "SCR-18",
+      "url": "https://www.dietswad.in/blog/is-ghee-healthy-myths-vs-science.html?utm_source=instagram&utm_medium=dm&utm_campaign=ghee-scr18",
+      "title": "Ghee Ka Poora Sach",
+      "subtitle": "5 myths answered, how to use it and how much.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/ghee-ka-poora-sach-5-myths-vs-science.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-18 · guides/ghee-ka-poora-sach-5-myths-vs-science.pdf"
+    },
+    {
+      "id": "peanut-scr19",
+      "keyword": "PEANUT",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-19"
+      ],
+      "source_piece": "SCR-19",
+      "url": "https://www.dietswad.in/blog/are-peanuts-healthy.html?utm_source=instagram&utm_medium=dm&utm_campaign=peanut-scr19",
+      "title": "Peanuts Ka Poora Sach",
+      "subtitle": "Benefits, myths, and the allergy facts that matter.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/peanuts-ka-poora-sach.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-19 · guides/peanuts-ka-poora-sach.pdf"
+    },
+    {
+      "id": "jaggery-scr20",
+      "keyword": "JAGGERY",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-20"
+      ],
+      "source_piece": "SCR-20",
+      "url": "https://www.dietswad.in/blog/jaggery-vs-refined-sugar-vs-desi-khand.html?utm_source=instagram&utm_medium=dm&utm_campaign=jaggery-scr20",
+      "title": "Sugar vs Jaggery vs Khand",
+      "subtitle": "An honest comparison, plus 4 home purity tests.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/white-sugar-vs-jaggery-vs-desi-khand.pdf",
+      "blog_attribute": "JAGGERY",
+      "notes": "SCR-20 · guides/white-sugar-vs-jaggery-vs-desi-khand.pdf DONE 2026-08-31: the .post-magnet block was added to the published page (data-guide-download=\"JAGGERY\") and the keyword enabled. Trigger confirmed against SCR-20 captions."
+    },
+    {
+      "id": "khajoor-scr21",
+      "keyword": "KHAJOOR",
+      "aliases": [],
+      "match": "word",
+      "enabled": false,
+      "blocked_reason": "reel not published yet",
+      "media_ids": [],
+      "extra_media_ids": [],
+      "pieces": [
+        "SCR-21"
+      ],
+      "source_piece": "SCR-21",
+      "url": "https://www.dietswad.in/blog/how-to-spot-sugar-coated-dates.html?utm_source=instagram&utm_medium=dm&utm_campaign=khajoor-scr21",
+      "title": "Asli vs Nakli Dates",
+      "subtitle": "Spot syrup-dipped dates before you pay for them.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/asli-vs-nakli-dates.pdf",
+      "blog_attribute": null,
+      "notes": "SCR-21 · guides/asli-vs-nakli-dates.pdf (PDF uploaded, no blog page) DONE 2026-08-31. Not a duplicate of DATES after all. Pritam, 2026-08-31: the sugar-syrup coating is a LOCAL-date practice, so this page is how to spot a coated date before buying, while arabian-dates-vs-local-dates.html keeps the nutritional comparison. Trigger KHAJOOR confirmed against SCR-21 captions and script_21.md."
+    },
+    {
+      "id": "chemical-vid01-04",
+      "keyword": "CHEMICAL",
+      "aliases": [],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18619934509050883",
+        "17865607263535406",
+        "18060100391429468",
+        "17865378846667378",
+        "18114722566663860",
+        "18014562413671312",
+        "17924603937252212",
+        "18121488607524995",
+        "17876950170535709",
+        "18005839811851228",
+        "17885702040463907"
+      ],
+      "extra_media_ids": [],
+      "pieces": [
+        "VID-01",
+        "VID-02",
+        "VID-03",
+        "VID-04"
+      ],
+      "source_piece": "VID-01...04",
+      "url": "https://www.dietswad.in/blog/what-is-really-inside-packaged-snacks.html?utm_source=instagram&utm_medium=dm&utm_campaign=chemical-vid01-04",
+      "title": "What's Really Inside",
+      "subtitle": "The label code-words, decoded in plain language.",
+      "button_title": "Get the guide",
+      "image_url": null,
+      "pdf": "guides/packaged-snacks-ka-sach.pdf",
+      "blog_attribute": null,
+      "notes": "Shooting videos 1-4 (all four share this one trigger) · guides/packaged-snacks-ka-sach.pdf CHEMICAL keeps pointing at the BROAD guide (20 snack types) — do not swap it. The separate biscuit guide 'Whats Really Inside Your Daily Biscuit' (added 2026-08-31) gets its OWN blog page — Pritam's call 2026-08-31, TODO today. It will get its OWN trigger word (e.g. BISCUIT) LATER, once a reel is recorded that says it out loud. Do not add that keyword here until then: a trigger nobody speaks can never fire."
+    }
+  ]
+}
