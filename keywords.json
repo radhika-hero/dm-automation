@@ -137,9 +137,12 @@
       "enabled": true,
       "blocked_reason": null,
       "media_ids": [
-        "18094901510428823"
+        "18094901510428823",
+        "18619934509050883"
       ],
-      "extra_media_ids": [],
+      "extra_media_ids": [
+        "18619934509050883"
+      ],
       "pieces": [
         "SCR-03"
       ],
@@ -151,7 +154,7 @@
       "image_url": null,
       "pdf": "guides/healthy-cookie-ka-sach-dietitian-guide.pdf",
       "blog_attribute": null,
-      "notes": "SCR-03 · guides/healthy-cookie-ka-sach-dietitian-guide.pdf"
+      "notes": "SCR-03 - guides/healthy-cookie-ka-sach-dietitian-guide.pdf. Also answers VID-01, the Aug 15 'cookie lie' reel (18619934509050883), by hand: its caption asks for COOKIE and its subject is cookies, so the cookie blog and cookie PDF are the right answer even though provenance calls the piece VID-01. Pritam 2026-09-01. It sits in extra_media_ids rather than pieces because the piece genuinely is VID-01 - the pin is a deliberate content decision, and the sync must never undo it."
     },
     {
       "id": "label-scr04",
@@ -555,7 +558,6 @@
       "enabled": true,
       "blocked_reason": null,
       "media_ids": [
-        "18619934509050883",
         "17865607263535406",
         "18060100391429468",
         "17865378846667378",
@@ -569,12 +571,11 @@
       ],
       "extra_media_ids": [],
       "pieces": [
-        "VID-01",
         "VID-02",
         "VID-03",
         "VID-04"
       ],
-      "source_piece": "VID-01...04",
+      "source_piece": "VID-02...04",
       "url": "https://www.dietswad.in/blog/what-is-really-inside-packaged-snacks.html?utm_source=instagram&utm_medium=dm&utm_campaign=chemical-vid01-04",
       "title": "What's Really Inside",
       "subtitle": "The label code-words, decoded in plain language.",
@@ -582,7 +583,7 @@
       "image_url": null,
       "pdf": "guides/packaged-snacks-ka-sach.pdf",
       "blog_attribute": null,
-      "notes": "Shooting videos 1-4 (all four share this one trigger) · guides/packaged-snacks-ka-sach.pdf CHEMICAL keeps pointing at the BROAD guide (20 snack types) — do not swap it. The separate biscuit guide 'Whats Really Inside Your Daily Biscuit' (added 2026-08-31) gets its OWN blog page — Pritam's call 2026-08-31, TODO today. It will get its OWN trigger word (e.g. BISCUIT) LATER, once a reel is recorded that says it out loud. Do not add that keyword here until then: a trigger nobody speaks can never fire."
+      "notes": "Shooting videos 2-4 share this one trigger. CHEMICAL keeps pointing at the BROAD guide (20 snack types) - do not swap it. VID-01 WAS claimed here until 2026-09-01, when the new provenance cross-check showed its caption asks for COOKIE, not CHEMICAL: it is the 'cookie lie' reel, so it belongs to the cookie guide. Pritam's rule 2026-09-01: route each post to the blog and PDF that match the word its caption actually asks for. VID-01's post is now in cookie-scr03's extra_media_ids. The 10 remaining pins are older posts Notion has no row for; the sync leaves those alone. The separate biscuit guide gets its OWN blog page and its OWN trigger LATER, once a reel is recorded that says it out loud - a trigger nobody speaks can never fire."
     }
   ]
 }
