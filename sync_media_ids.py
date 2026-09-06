@@ -34,8 +34,14 @@ AUTHORITATIVE, NOT APPEND-ONLY
 comment, writes nothing to either API.
 ⚠️ DRY BY DEFAULT — the old script wrote unless told not to. Reversed deliberately: this one can
 now remove pins, so the safe direction changed with it.
-⚠️ TOKENS come from files at the workspace root and are never printed, logged, or written into
-keywords.json. Keep them out of git.
+⚠️ TOKENS are never printed, logged, or written into keywords.json. Locally they come from files
+at the workspace root; in GitHub Actions they come from the environment (`NOTION_TOKEN`,
+`META_SYSTEM_USER_TOKEN`) and never touch disk — this repo is PUBLIC. Keep them out of git.
+
+RUNS UNATTENDED (2026-09-07): `.github/workflows/keyword-sync.yml` runs this daily with --write
+and commits keywords.json back, so an entry enables itself once its reel has posted. That is the
+whole reason `blocked_reason` was cleared on the seven Sep/Oct entries — it was the only thing
+left forcing a hand edit after each post.
 """
 from __future__ import annotations
 
@@ -84,10 +90,22 @@ def piece_of(source_file: str) -> str | None:
     return None
 
 
-def read_token(path: Path, env_var: str) -> str:
-    path = Path(os.environ.get(env_var, path))
+def read_token(path: Path, path_env_var: str, value_env_var: str) -> str:
+    """The token VALUE from the environment if present, else the local token file.
+
+    Two callers with different shapes. Locally the tokens live in files at the workspace root,
+    and `path_env_var` relocates that file. In GitHub Actions there is no file — a secret is a
+    value — so `value_env_var` is read first and nothing is ever written to disk. This repo is
+    PUBLIC; the same rule meta.py has followed since day one (env only, never a file) now
+    applies here too.
+    """
+    value = os.environ.get(value_env_var, "").strip()
+    if value:
+        return value
+    path = Path(os.environ.get(path_env_var, path))
     if not path.exists():
-        raise SystemExit(f"ERROR: token file not found: {path.name} (set {env_var})")
+        raise SystemExit(f"ERROR: no {value_env_var} in the environment and no token file "
+                         f"at {path.name} (set {path_env_var} to relocate it)")
     token = path.read_text(encoding="utf-8").strip()
     if not token:
         raise SystemExit(f"ERROR: {path.name} is empty")
@@ -218,8 +236,8 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=400, help="how many posts to read captions for")
     args = ap.parse_args()
 
-    notion_token = read_token(DEFAULT_NOTION_TOKEN, "DS_NOTION_TOKEN_FILE")
-    meta_token = read_token(DEFAULT_META_TOKEN, "DS_TOKEN_FILE")
+    notion_token = read_token(DEFAULT_NOTION_TOKEN, "DS_NOTION_TOKEN_FILE", "NOTION_TOKEN")
+    meta_token = read_token(DEFAULT_META_TOKEN, "DS_TOKEN_FILE", "META_SYSTEM_USER_TOKEN")
 
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     keywords = config.get("keywords", [])

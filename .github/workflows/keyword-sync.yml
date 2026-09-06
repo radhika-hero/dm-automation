@@ -1,0 +1,103 @@
+# Keyword pin + enable sync. Once a day (DM_UTM_AND_POST_IDENTITY_PLAN.md).
+#
+# What it removes: the hand step after every post. `sync_media_ids.py` pins each entry to its
+# posts using Notion provenance (Notion row -> Source File -> piece code -> entry) and then
+# enables any entry that has pins + a url + no blocked_reason. Before this workflow existed
+# somebody had to run it locally and commit keywords.json, once per posted reel — seven times
+# over Sep 8 - Oct 3 alone.
+#
+# 🔴 WHY NOT JUST ENABLE THE ENTRIES BY HAND INSTEAD (asked 2026-09-07):
+# an ENABLED entry with an empty `media_ids` is UNSCOPED, and matcher.py lets an unscoped entry
+# answer its word on ANY Instagram post. Proven live 2026-08-31 — SWEET, enabled and unpinned,
+# returned the sweetener card to a comment of "so sweet" on a label-reading reel. The words in
+# play make it worse (DATES, EASY, TRUTH, and DIET, which sits inside "Diet Swad"), and the
+# private reply is ONE-SHOT AND IRREVERSIBLE. Pinning first is not bureaucracy; it is the only
+# thing standing between an ordinary comment and a wrong card that cannot be recalled.
+#
+# ⚠️ PUBLIC REPO. Both tokens are Actions secrets read from the environment and NEVER written to
+# a file — sync_media_ids.py takes the value from NOTION_TOKEN / META_SYSTEM_USER_TOKEN.
+# It is READ-ONLY against Meta and Notion: no DM, no comment, no write to either API.
+name: keyword-sync
+
+on:
+  # 20:00 UTC = 01:30 IST. Posts are due 12:00 UTC and the scheduler's cron drifts 1-2.5h, so
+  # by now the day's reels have posted AND the runner has written their Media ID into Notion,
+  # which is what pinning reads.
+  schedule:
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the plan, write nothing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write          # keywords.json is committed back
+
+# Never let two syncs overlap: both would compute pins from the same Notion state and race the
+# commit. Deliberately a DIFFERENT group from dm-poller — a 10-minute poller must not be queued
+# behind this — so the push race with the ledger is handled by rebase-and-retry below instead.
+concurrency:
+  group: keyword-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Sync pins and enable what is ready
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          META_SYSTEM_USER_TOKEN: ${{ secrets.META_SYSTEM_USER_TOKEN }}
+        run: |
+          if [ -z "$NOTION_TOKEN" ]; then
+            echo "ERROR: the NOTION_TOKEN secret is not set — pinning reads Notion, so there is"
+            echo "nothing this job can do without it. Add it under Settings > Secrets > Actions."
+            exit 1
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            python -X utf8 sync_media_ids.py
+          else
+            python -X utf8 sync_media_ids.py --write
+          fi
+
+      # Fail-closed, same gate the poller runs before sending: a config the sync has just
+      # rewritten must still be valid, or the next tick DMs a dead card. Checked BEFORE the
+      # commit so a bad rewrite is never pushed.
+      - name: Validate keywords.json
+        run: python -X utf8 validate.py
+
+      - name: Commit keywords.json
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          git config user.name "ds-dm-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet keywords.json; then
+            echo "keywords.json unchanged — nothing to commit"
+            exit 0
+          fi
+          git add keywords.json
+          git commit -m "dm: sync keyword pins [skip ci]"
+          # The poller commits ledger.json on its own 10-minute schedule, so a push can lose the
+          # race. Rebase and retry rather than failing the run over it.
+          for attempt in 1 2 3; do
+            if git pull --rebase && git push; then
+              echo "pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "push attempt $attempt lost a race — retrying"
+            sleep 5
+          done
+          echo "ERROR: could not push keywords.json after 3 attempts"
+          exit 1
