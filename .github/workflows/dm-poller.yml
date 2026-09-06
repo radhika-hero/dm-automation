@@ -25,8 +25,8 @@ on:
   #
   # (Secrets must be set before either run, or run.py exits 1 and every tick goes red.)
   #
-  # schedule:
-  #   - cron: "*/10 * * * *"
+  schedule:
+    - cron: "*/10 * * * *"
   workflow_dispatch:
     inputs:
       dry_run:
