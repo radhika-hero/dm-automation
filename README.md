@@ -20,13 +20,22 @@ operating manual only.
 3. **Public repo ⇒ the token never touches a file.** `META_SYSTEM_USER_TOKEN` is an Actions
    secret and nothing else. It is the same never-expiring token that runs the live poster.
 
-## Status
+## Status — 🟢 LIVE as of 2026-09-06
 
-- **Instagram: works today.** No App Review, no new permission, no webhook server.
-  `instagram_manage_comments` on the existing token covers it. Card + button render confirmed
+The cron is ON (`*/10`), the three Actions secrets are set, and the ledger is no longer empty.
+
+- **Instagram: LIVE and proven.** First real DM sent 2026-09-06 17:41 UTC — `COOKIE` from
+  `@pritamsaha45`, `sent=1 failures=0`, ledger committed back. Card + button render confirmed
   by Pritam 2026-08-17.
-- **Facebook Messenger: blocked** on `pages_messaging` (real App Review). Same endpoint, same
-  template — `platform` is a parameter here, so adding it later is config, not a rewrite.
+- **Facebook Messenger: scope granted, send still UNPROVEN.** The token regenerated 2026-09-06
+  carries `pages_messaging` (27 scopes, SYSTEM_USER, never expires — all 24 originals intact
+  plus `pages_messaging`, `pages_utility_messaging`, `paid_marketing_messages`). The **read**
+  path works — the 17:22 run logged `[facebook] scope: 20 of 25 recent posts carry a CTA` with
+  no `(#230)`. But **no Facebook DM has ever been sent**: the 17:40 run hit `--limit 1` on
+  Instagram and returned before reaching Facebook, and the only Facebook comment in view was
+  outside the 7-day window. The first FB send will therefore happen unsupervised on a cron tick.
+  Recoverable if it fails — a failed send does not consume the comment's one allowed reply —
+  but it is worth forcing a supervised `limit 1` test on a fresh Facebook comment.
 
 ## Files
 
