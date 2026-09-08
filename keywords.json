@@ -376,11 +376,15 @@
       "keyword": "TRUTH",
       "aliases": [],
       "match": "word",
-      "enabled": false,
+      "enabled": true,
       "blocked_reason": null,
-      "media_ids": [],
+      "media_ids": [
+        "18622568590007874"
+      ],
       "extra_media_ids": [],
-      "facebook_post_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122150939847111771"
+      ],
       "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-11"
