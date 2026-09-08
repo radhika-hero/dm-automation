@@ -76,7 +76,13 @@ PIECE_PATTERNS = [
     (re.compile(r"reel\s*script\s*(\d+)", re.I),                     "SCR"),
     (re.compile(r"series_work[\\/]read_the_label[\\/]part_(\d+)", re.I), "RTL"),
     (re.compile(r"series_work[\\/]swad_se_sehat_tak[\\/]part_(\d+)", re.I), "SST"),
-    (re.compile(r"series_work[\\/]behind_the_dish[\\/]part_(\d+)", re.I),   "BD"),
+    # The folder is `business_diaries`. It was written as `behind_the_dish` from this table's
+    # first commit until 2026-09-09 — a name that exists nowhere on disk, in the calendar, or in
+    # any posted row — so every BD Source File resolved to None and no BD post could ever be
+    # pinned. Silent by construction: an unmatched path is only ever *reported*, and until now no
+    # BD entry existed to notice the gap. Caught while checking SCR-19's CTA wiring, before the
+    # first BD post (BD-2, calendared for 2026-09-11) went out.
+    (re.compile(r"series_work[\\/]business_diaries[\\/]part_(\d+)", re.I),  "BD"),
     (re.compile(r"[\\/]Video\s*(\d+)[\\/]", re.I),                   "VID"),
 ]
 
