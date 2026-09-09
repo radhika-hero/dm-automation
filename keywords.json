@@ -59,7 +59,7 @@
   ],
   "schema_version": 2,
   "own_username": "dietswad",
-  "scan_media_limit": 25,
+  "scan_media_limit": 60,
   "media_ids": [],
   "public_reply": {
     "enabled": true,
@@ -689,6 +689,48 @@
       "pdf": "guides/packaged-snacks-ka-sach.pdf",
       "blog_attribute": null,
       "notes": "Shooting videos 1-4 share this trigger. CHEMICAL points at the BROAD guide (20 snack types, guides/packaged-snacks-ka-sach.pdf) - do not swap it. The SAME posts also carry COOKIE, which serves the narrower BISCUIT guide via cookie-vid01-04. That is deliberate (Pritam 2026-09-01): one post, two words, two different guides. No conflict, because the two entries have DIFFERENT trigger words - only entries sharing a word need disjoint pins. The 10 extra pins are older posts Notion has no row for."
+    },
+    {
+      "id": "list-all7",
+      "keyword": "LIST",
+      "aliases": [
+        "ELEVEN",
+        "FOUR",
+        "MYTH",
+        "BINGO",
+        "CHAI"
+      ],
+      "match": "word",
+      "enabled": true,
+      "blocked_reason": null,
+      "media_ids": [
+        "18572729395068998",
+        "18053386100583042",
+        "17904948216500896",
+        "18127563940774976",
+        "18088864331447458",
+        "18135316762574674"
+      ],
+      "extra_media_ids": [
+        "18572729395068998",
+        "18053386100583042",
+        "17904948216500896",
+        "18127563940774976",
+        "18088864331447458",
+        "18135316762574674"
+      ],
+      "facebook_post_ids": [],
+      "facebook_extra_post_ids": [],
+      "pieces": [],
+      "source_piece": null,
+      "url": "https://www.dietswad.in/blog/whats-actually-in-diet-swad-all-7-ingredient-lists.html?utm_source=instagram&utm_medium=dm&utm_campaign=list-all7",
+      "title": "Every Ingredient. All 7 Products.",
+      "subtitle": "Exact percentages and allergens for everything we make.",
+      "button_title": "See the full list",
+      "image_url": null,
+      "pdf": "guides/every-ingredient-all-7-products.pdf",
+      "blog_attribute": "LIST-ALL7",
+      "notes": "Answers SIX orphan CTAs with one asset: LIST + aliases ELEVEN, FOUR, MYTH, BINGO, CHAI. Those captions each promised a photo of our own ingredient list ('the label photo', 'the full label', 'the four-ingredient list', 'both lists side by side', 'what's actually in them', 'the full ingredient breakdown for all 7') and nothing answered any of them - the orphan-CTA finding of 2026-09-07. Guide and blog page built 2026-09-09; every percentage comes from the V4.1 catalogue via Video Editing/lead_magnets/content_ingredients.py. pieces is EMPTY on purpose: four of the six pinned posts are statics/carousels whose Source File maps to no piece, so piece_of() can never re-derive them - the pins live in extra_media_ids, which the sync never undoes. The Sep 9 FAQ carousel also asks for LIST and must be hand-added here once it is live, for the same reason."
     }
   ]
 }
