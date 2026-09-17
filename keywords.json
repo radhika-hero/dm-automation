@@ -519,11 +519,15 @@
       "keyword": "DIET",
       "aliases": [],
       "match": "word",
-      "enabled": false,
+      "enabled": true,
       "blocked_reason": null,
-      "media_ids": [],
+      "media_ids": [
+        "17958927809998228"
+      ],
       "extra_media_ids": [],
-      "facebook_post_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122151801813111771"
+      ],
       "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-16"
