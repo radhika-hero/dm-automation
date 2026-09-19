@@ -595,11 +595,15 @@
       "keyword": "PEANUT",
       "aliases": [],
       "match": "word",
-      "enabled": false,
+      "enabled": true,
       "blocked_reason": null,
-      "media_ids": [],
+      "media_ids": [
+        "18129522586665246"
+      ],
       "extra_media_ids": [],
-      "facebook_post_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122152044189111771"
+      ],
       "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-19"
