@@ -551,11 +551,15 @@
       "keyword": "MIDNIGHT",
       "aliases": [],
       "match": "word",
-      "enabled": false,
+      "enabled": true,
       "blocked_reason": null,
-      "media_ids": [],
+      "media_ids": [
+        "18119985997950181"
+      ],
       "extra_media_ids": [],
-      "facebook_post_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122152657539111771"
+      ],
       "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-17"
