@@ -527,9 +527,13 @@
       "match": "word",
       "enabled": false,
       "blocked_reason": "reel not published yet",
-      "media_ids": [],
+      "media_ids": [
+        "18120549484988187"
+      ],
       "extra_media_ids": [],
-      "facebook_post_ids": [],
+      "facebook_post_ids": [
+        "915233554997476_122157072075111771"
+      ],
       "facebook_extra_post_ids": [],
       "pieces": [
         "SCR-15"
