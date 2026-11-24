@@ -622,7 +622,7 @@
       "aliases": [],
       "match": "word",
       "enabled": false,
-      "blocked_reason": "reel not published yet",
+      "blocked_reason": null,
       "media_ids": [],
       "extra_media_ids": [],
       "facebook_post_ids": [],

@@ -24,6 +24,16 @@ operating manual only.
 
 The cron is ON (`*/10`), the three Actions secrets are set, and the ledger is no longer empty.
 
+- **2026-11-25 — KHAJOOR fixed (SCR-21).** Comments on the Nov 21 reel were read and silently
+  skipped: the entry was pinned correctly, but `blocked_reason: "reel not published yet"` was never
+  cleared, and `sync_media_ids.py` never enables an entry while a `blocked_reason` is set. FRESH
+  (SCR-10) and SWEET (SCR-15) were stuck the same way. All three enabled (`dd9b61e`); 2 KHAJOOR
+  DMs sent the same night (`f75c356`). GHEE (SCR-18) had its stale reason cleared too, so it
+  enables itself once SCR-18 posts. **Rule: never set `blocked_reason` to "reel not published
+  yet"** — the pin check (`has_pins`) already gates that; use `blocked_reason` only for a real
+  blocker (no guide, no page). A comment in Devanagari (`खजुर`) can never match: the matcher
+  keeps only a–z/0–9. The one such comment was answered by hand.
+
 - **Instagram: LIVE and proven.** First real DM sent 2026-09-06 17:41 UTC — `COOKIE` from
   `@pritamsaha45`, `sent=1 failures=0`, ledger committed back. Card + button render confirmed
   by Pritam 2026-08-17.
