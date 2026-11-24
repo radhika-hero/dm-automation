@@ -34,5 +34,27 @@
     "status": "sent",
     "updated_utc": "2026-10-07T19:34:22+00:00",
     "public_replied": true
+  },
+  "instagram:17967228858217629": {
+    "username": "_akash.788",
+    "keyword": "KHAJOOR",
+    "platform": "instagram",
+    "message_id": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDY3NDE5NzAwOTYyOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI1OTMzMjU4MzIwMDQ3MjI1MDozMzEyMjE1MjQyODA5Mjc0NTE3MTQxNDYyOTE2MTYzMTc0NAZDZD",
+    "recipient_id": "2608872429629748",
+    "media_id": "18082104116754178",
+    "status": "sent",
+    "updated_utc": "2026-11-24T21:24:42+00:00",
+    "public_replied": true
+  },
+  "instagram:18129295885877987": {
+    "username": "sadiyaaafayaz",
+    "keyword": "KHAJOOR",
+    "platform": "instagram",
+    "message_id": "aWdfZAG1faXRlbToxOklHTWVzc2FnZAUlEOjE3ODQxNDY3NDE5NzAwOTYyOjM0MDI4MjM2Njg0MTcxMDMwMTI0NDI1OTk5MjA3NzIyNjU4NTU5MzozMzEyMjE1MjUzNTgzMTQ4ODg4OTQ5MzQwMjk1MTg3NjYwOAZDZD",
+    "recipient_id": "1457771309801686",
+    "media_id": "18082104116754178",
+    "status": "sent",
+    "updated_utc": "2026-11-24T21:24:48+00:00",
+    "public_replied": true
   }
 }
