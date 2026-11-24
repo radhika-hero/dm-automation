@@ -385,8 +385,8 @@
       "keyword": "FRESH",
       "aliases": [],
       "match": "word",
-      "enabled": false,
-      "blocked_reason": "reel not published yet",
+      "enabled": true,
+      "blocked_reason": null,
       "media_ids": [
         "18111471944521719"
       ],
@@ -535,8 +535,8 @@
       "keyword": "SWEET",
       "aliases": [],
       "match": "word",
-      "enabled": false,
-      "blocked_reason": "reel not published yet",
+      "enabled": true,
+      "blocked_reason": null,
       "media_ids": [
         "18120549484988187"
       ],
@@ -701,8 +701,8 @@
       "keyword": "KHAJOOR",
       "aliases": [],
       "match": "word",
-      "enabled": false,
-      "blocked_reason": "reel not published yet",
+      "enabled": true,
+      "blocked_reason": null,
       "media_ids": [
         "18082104116754178"
       ],
